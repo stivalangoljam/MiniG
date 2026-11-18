@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MiniGoogle</title>
+<style>
+:root{--bg:#fff;--fg:#202124;--mute:#70757a;--desc:#4d5156;--link:#1a0dab;--url:#202124;--border:#dfe1e5;--soft:#f8f9fa;--blue:#4285F4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#202124;--fg:#e8eaed;--mute:#9aa0a6;--desc:#bdc1c6;--link:#8ab4f8;--url:#dadce0;--border:#5f6368;--soft:#303134}}
+:root[data-theme="dark"]{--bg:#202124;--fg:#e8eaed;--mute:#9aa0a6;--desc:#bdc1c6;--link:#8ab4f8;--url:#dadce0;--border:#5f6368;--soft:#303134}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:arial,sans-serif}
+button{font-family:inherit;cursor:pointer}
+.home{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;animation:fade .5s}
+.logo{font-family:"Product Sans",Arial,sans-serif;font-weight:500;letter-spacing:-2px;line-height:1;white-space:nowrap}
+.logo.big{font-size:clamp(46px,13vw,84px)}.logo.sm{font-size:30px;cursor:pointer}
+.sub{color:var(--mute);margin:14px 0 24px;font-size:14px;text-align:center}
+.sbox{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:24px;padding:0 16px;height:44px;background:var(--bg);width:100%;max-width:584px}
+.sbox:hover,.sbox:focus-within{box-shadow:0 1px 6px rgba(32,33,36,.28);border-color:transparent}
+.sbox input{flex:1;border:0;outline:0;background:transparent;color:var(--fg);font-size:16px;height:100%;min-width:0}
+.x{border:0;background:none;color:var(--mute);font-size:22px;line-height:1}
+.btns{display:flex;gap:12px;margin-top:28px}
+.gbtn{background:var(--soft);color:var(--fg);border:1px solid var(--soft);border-radius:4px;padding:0 16px;height:36px;font-size:14px}
+.gbtn:hover{border-color:var(--border);box-shadow:0 1px 1px rgba(0,0,0,.1)}
+.top{display:flex;align-items:center;gap:28px;padding:20px 20px 0;flex-wrap:wrap}
+.top .sbox{max-width:692px;flex:1;min-width:220px}
+.tabs{display:flex;gap:4px;padding:12px 20px 0 20px;border-bottom:1px solid var(--border);font-size:14px;color:var(--mute);align-items:center;flex-wrap:wrap}
+.tabs .t{padding:10px 14px 12px}.tabs .on{color:var(--blue);border-bottom:3px solid var(--blue)}
+.tabs label{margin-left:auto;font-size:13px;padding-bottom:8px;display:flex;gap:6px;align-items:center}
+.about{color:var(--mute);font-size:14px;padding:12px 20px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+.col{padding:8px 20px 40px;min-width:0}
+.col+.col{border-left:1px solid var(--border)}
+@media(max-width:820px){.col+.col{border-left:0;border-top:1px solid var(--border)}}
+.col h2{font-size:14px;font-weight:700;margin:12px 0 6px;color:var(--fg)}
+.col h2 small{font-weight:400;color:var(--mute)}
+.scroll{overflow-y:auto;max-height:calc(100vh - 230px);min-height:300px}
+.list{position:relative}
+.r{position:absolute;left:0;right:0;height:152px;padding-top:14px;transition:top .6s cubic-bezier(.4,0,.2,1);animation:fade .5s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.site{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.fav{width:28px;height:28px;border-radius:50%;background:var(--soft);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--mute);flex:none}
+.sn{font-size:14px;line-height:18px;color:var(--url)}
+.su{font-size:12px;line-height:16px;color:var(--mute)}
+.ti{display:block;color:var(--link);font-size:20px;line-height:26px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ti:hover{text-decoration:underline}
+.ds{font-size:14px;line-height:22px;color:var(--desc);margin-top:2px}
+.ds b{color:var(--fg);font-weight:700}
+.sc{font-size:13px;color:var(--mute);margin-top:4px}
+.sc span{margin-right:12px}.sc em{font-style:normal;color:#188038}.sc i{font-style:normal;color:#d93025}
+.ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;padding:16px 20px 40px;animation:fade .5s}
+.it{cursor:pointer;transition:transform .2s}.it:hover{transform:scale(1.03)}
+.pic{border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.cap{padding:6px 2px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useMemo,useEffect} = React;
+
+/* ===== DATA ===== */
+const DAMPING = 0.85;
+const SITES = [
+ {id:"pune-food-guide.com",name:"Pune Food Guide",title:"Where to Eat in Pune",content:"Vada pav and biryani and pizza."},
+ {id:"best-pizza-pune.com",name:"Best Pizza Pune",title:"Best Pizza in Pune",content:"Fresh wood-fired pizza made daily – try our cheese pizza."},
+ {id:"college-canteen-blog.com",name:"College Canteen Blog",title:"Student Canteen Reviews",content:"Student reviews of canteen food and chai and Friday pizza."},
+ {id:"pizza-recipes-home.com",name:"Pizza Recipes Home",title:"Homemade Pizza Recipes",content:"Make pizza at home – pizza dough and pizza sauce."},
+ {id:"cheap-eats-pune.com",name:"Cheap Eats Pune",title:"Cheap Eats in Pune",content:"Affordable street food, thali and chai spots for students and families across Pune. (Placeholder description)"},
+ {id:"pizza-pizza-pizza.com",name:"Pizza Pizza Pizza",title:"Pizza Pizza Pizza",content:"pizza pizza pizza pizza pizza pizza pizza pizza."},
+];
+const LINKS = [
+ ["pune-food-guide.com","best-pizza-pune.com"],["pune-food-guide.com","cheap-eats-pune.com"],
+ ["best-pizza-pune.com","pizza-recipes-home.com"],["best-pizza-pune.com","pune-food-guide.com"],
+ ["college-canteen-blog.com","best-pizza-pune.com"],["college-canteen-blog.com","cheap-eats-pune.com"],
+ ["pizza-recipes-home.com","best-pizza-pune.com"],["pizza-recipes-home.com","pune-food-guide.com"],
+ ["cheap-eats-pune.com","best-pizza-pune.com"],["cheap-eats-pune.com","college-canteen-blog.com"],
+ ["pizza-pizza-pizza.com","pizza-recipes-home.com"],
+];
+
+/* ===== RANKING LOGIC ===== */
+const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+const toks = q => q.toLowerCase().split(/\s+/).filter(Boolean);
+const countKw = (text,q) => toks(q).reduce((n,t)=>n+(text.match(new RegExp("\\b"+esc(t)+"\\b","gi"))||[]).length,0);
+function keywordRank(q){
+  return SITES.map((s,i)=>({id:s.id,count:countKw(s.content,q),i}))
+    .sort((a,b)=>b.count-a.count||a.i-b.i).map((r,k)=>({...r,rank:k+1}));
+}
+function pageRank(d=DAMPING,tol=1e-10,max=500){
+  const ids=SITES.map(s=>s.id),N=ids.length,out={},inc={};
+  ids.forEach(i=>{out[i]=new Set();inc[i]=[];});
+  LINKS.forEach(([a,b])=>{if(a!==b)out[a].add(b);});
+  ids.forEach(a=>out[a].forEach(b=>inc[b].push(a)));
+  let pr=Object.fromEntries(ids.map(i=>[i,1/N]));
+  for(let it=0;it<max;it++){
+    const dang=ids.filter(i=>!out[i].size).reduce((s,i)=>s+pr[i],0);
+    const nx={};let diff=0;
+    ids.forEach(p=>{let s=0;inc[p].forEach(t=>s+=pr[t]/out[t].size);nx[p]=(1-d)/N+d*(s+dang/N);diff+=Math.abs(nx[p]-pr[p]);});
+    pr=nx;if(diff<tol)break;
+  }
+  return [...ids].sort((a,b)=>pr[b]-pr[a]).map((id,k)=>({id,rank:k+1,score:pr[id]}));
+}
+
+/* ===== UI ===== */
+const COL=["#4285F4","#EA4335","#FBBC05","#4285F4","#34A853","#EA4335","#4285F4","#EA4335","#FBBC05","#34A853"];
+const Logo=({cls,onClick})=><div className={"logo "+cls} onClick={onClick}>{"MiniGoogle".split("").map((c,i)=><span key={i} style={{color:COL[i]}}>{c}</span>)}</div>;
+const Mag=()=><svg width="20" height="20" viewBox="0 0 24 24" fill="#9aa0a6"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 14 15.5l.27.28v.79l5 4.99L20.49 19zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"/></svg>;
+function Box({v,set,go}){return <div className="sbox"><Mag/><input value={v} onChange={e=>set(e.target.value)} onKeyDown={e=>e.key==="Enter"&&go()} placeholder="Search MiniGoogle" autoFocus aria-label="Search"/>{v&&<button className="x" onClick={()=>set("")} aria-label="Clear">×</button>}</div>;}
+function Hl({text,q}){const t=toks(q);if(!t.length)return text;return text.split(new RegExp("\\b("+t.map(esc).join("|")+")\\b","gi")).map((p,i)=>i%2?<b key={i}>{p}</b>:p);}
+
+function Col({title,sub,list,q,mode,other,kw,pr,show}){
+  return <div className="col"><h2>{title} <small>{sub}</small></h2>
+    <div className="scroll"><div className="list" style={{height:list.length*152}}>
+    {list.map((r,idx)=>{const s=SITES.find(x=>x.id===r.id),d=other[r.id]-r.rank;
+      return <div className="r" key={r.id} style={{top:idx*152}}>
+        <div className="site"><div className="fav">{s.name[0]}</div><div><div className="sn">{s.name}</div><div className="su">https://{s.id}</div></div></div>
+        <a className="ti" href="#" onClick={e=>e.preventDefault()}>{s.title}</a>
+        <div className="ds"><Hl text={s.content} q={q}/></div>
+        {show&&<div className="sc">
+          <span>#{r.rank}</span>
+          {mode==="old"?<><span>Keyword count: {kw[r.id]}</span><span>Score: {kw[r.id]}</span></>:<span>PageRank: {pr[r.id].toFixed(4)}</span>}
+          {d>0&&<em>▲ {d}</em>}{d<0&&<i>▼ {-d}</i>}
+        </div>}
+      </div>;})}
+    </div></div></div>;
+}
+
+const KIND={"pune-food-guide.com":"thali","best-pizza-pune.com":"pizza","college-canteen-blog.com":"chai","pizza-recipes-home.com":"dough","cheap-eats-pune.com":"coin","pizza-pizza-pizza.com":"spam"};
+const Pz=({x,y,r})=><g><circle cx={x} cy={y} r={r} fill="#E1A04B"/><circle cx={x} cy={y} r={r*.88} fill="#D9382B"/><circle cx={x} cy={y} r={r*.8} fill="#F6D365"/>{[[-.4,-.3],[.3,-.4],[.45,.2],[-.2,.4],[0,0],[-.55,.1]].map(([a,b],i)=><circle key={i} cx={x+a*r} cy={y+b*r} r={r*.14} fill="#C0392B"/>)}</g>;
+function Pic({kind}){
+  const bg={thali:"#FFF3E0",pizza:"#E8F5E9",chai:"#FFF8E1",dough:"#E3F2FD",coin:"#F3E5F5",spam:"#FFFDE7"}[kind];
+  return <svg viewBox="0 0 200 150" style={{width:"100%",display:"block"}} role="img" aria-label={kind}>
+    <rect width="200" height="150" fill={bg}/>
+    {kind==="thali"&&<g><circle cx="100" cy="75" r="58" fill="#CFD8DC"/><circle cx="100" cy="75" r="50" fill="#ECEFF1"/>{[[75,55,"#E67E22"],[125,55,"#8D6E63"],[75,98,"#F1C40F"],[125,98,"#C0392B"]].map(([x,y,c],i)=><circle key={i} cx={x} cy={y} r="15" fill={c}/>)}<circle cx="100" cy="76" r="9" fill="#fff" stroke="#CFD8DC"/></g>}
+    {kind==="pizza"&&<Pz x={100} y={75} r={62}/>}
+    {kind==="chai"&&<g><ellipse cx="100" cy="118" rx="52" ry="9" fill="#BCAAA4"/><path d="M56 62 H144 V88 Q144 118 100 118 Q56 118 56 88 Z" fill="#FFF" stroke="#8D6E63" strokeWidth="3"/><path d="M58 66 H142 V76 H58 Z" fill="#C68642"/><path d="M144 72 Q168 74 160 92 Q154 102 142 100" fill="none" stroke="#8D6E63" strokeWidth="4"/><path d="M80 50 Q72 38 82 28 M102 50 Q94 38 104 28 M124 50 Q116 38 126 28" fill="none" stroke="#BDBDBD" strokeWidth="3" strokeLinecap="round"/></g>}
+    {kind==="dough"&&<g><path d="M36 82 Q100 150 164 82 Z" fill="#90A4AE"/><ellipse cx="100" cy="80" rx="62" ry="20" fill="#FFF3C4"/><ellipse cx="100" cy="72" rx="46" ry="14" fill="#FFE9A0"/><rect x="150" y="22" width="34" height="10" rx="5" fill="#A1887F" transform="rotate(30 167 27)"/></g>}
+    {kind==="coin"&&<g><circle cx="100" cy="75" r="48" fill="#FBBC05" stroke="#E0A100" strokeWidth="5"/><text x="100" y="92" textAnchor="middle" fontSize="52" fontWeight="700" fill="#fff">₹</text></g>}
+    {kind==="spam"&&<g>{[0,1,2,3].map(i=>[0,1].map(j=><Pz key={i+"-"+j} x={34+i*44} y={48+j*56} r={19}/>))}</g>}
+  </svg>;
+}
+function Images({list}){
+  return <div className="ig">{list.map(r=>{const s=SITES.find(x=>x.id===r.id);
+    return <div className="it" key={r.id}><div className="pic"><Pic kind={KIND[r.id]}/></div>
+      <div className="cap"><div className="su">{s.name}</div><a className="ti" style={{fontSize:14,lineHeight:"20px"}} href="#" onClick={e=>e.preventDefault()}>{s.title}</a></div></div>;})}</div>;
+}
+function App(){
+  const [view,setView]=useState("home"),[input,setInput]=useState(""),[q,setQ]=useState(""),[show,setShow]=useState(true),[tab,setTab]=useState("all");
+  useEffect(()=>{
+    if(location.hash==="#results")history.replaceState(null,"","#home");
+    const h=()=>{setView(location.hash==="#results"?"results":"home");window.scrollTo(0,0);};
+    window.addEventListener("hashchange",h);return()=>window.removeEventListener("hashchange",h);
+  },[]);
+  const goHome=()=>{location.hash="home";setView("home");window.scrollTo(0,0);};
+  const kwList=useMemo(()=>keywordRank(q),[q]);
+  const prList=useMemo(()=>pageRank(),[]);
+  const kw=Object.fromEntries(kwList.map(r=>[r.id,r.count]));
+  const kwR=Object.fromEntries(kwList.map(r=>[r.id,r.rank]));
+  const prR=Object.fromEntries(prList.map(r=>[r.id,r.rank]));
+  const pr=Object.fromEntries(prList.map(r=>[r.id,r.score]));
+  const go=t=>{const v=(t??input).trim();if(!v)return;setInput(v);setQ(v);location.hash="results";setView("results");window.scrollTo(0,0);};
+
+  if(view==="home")return <div className="home">
+    <Logo cls="big"/><div className="sub">Explore the evolution of search algorithms.</div>
+    <Box v={input} set={setInput} go={()=>go()}/>
+    <div className="btns"><button className="gbtn" onClick={()=>go()}>MiniGoogle Search</button><button className="gbtn" onClick={()=>go("pizza")}>I'm Feeling Lucky</button></div>
+  </div>;
+
+  return <div>
+    <div className="top"><Logo cls="sm" onClick={goHome}/><Box v={input} set={setInput} go={()=>go()}/></div>
+    <div className="tabs"><div className={"t"+(tab==="all"?" on":"")} style={{cursor:"pointer"}} onClick={()=>setTab("all")}>All</div><div className={"t"+(tab==="img"?" on":"")} style={{cursor:"pointer"}} onClick={()=>setTab("img")}>Images</div><div className="t" style={{cursor:"pointer"}} onClick={goHome}>← Home</div>
+      <label><input type="checkbox" checked={show} onChange={e=>setShow(e.target.checked)}/>Show ranking scores</label></div>
+    <div className="about">About {SITES.length} results for “{q}”</div>
+    {tab==="img"&&<Images list={prList}/>}
+    <div className="cols" style={{display:tab==="img"?"none":undefined}}>
+      <Col title="Old Google" sub="– Keyword Frequency" list={kwList} q={q} mode="old" other={prR} kw={kw} pr={pr} show={show}/>
+      <Col title="Modern Google" sub="– PageRank Algorithm" list={prList} q={q} mode="new" other={kwR} kw={kw} pr={pr} show={show}/>
+    </div>
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
